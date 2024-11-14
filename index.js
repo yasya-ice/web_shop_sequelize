@@ -25,10 +25,12 @@ app.use('/admin', productAdminRoutes)
 const productRoutes = require('./routes/products')
 app.use(productRoutes)
 
+const shopRoutes = require('./routes/shop')
+app.use(shopRoutes)
+
 sequelize
-    .sync()
+    .sync({force: true})
     .then(() => {
-        console.log('Tabelid on loodud')
         return models.User.findByPk(1);
     })
     .then(user => {
@@ -37,11 +39,12 @@ sequelize
         }
         return user; 
     })
-    .then(user => {
-        console.log(user);
-        app.listen(3003, () => {
-            console.log('Server is running on port 3003'); 
-        });
+    .then((user) => {
+        return user.createCart()
+    })
+    .then((cart) => {
+        console.log(cart)
+        app.listen(3003)
     })
     .catch((error) => {
         console.log(error)
