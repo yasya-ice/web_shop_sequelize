@@ -1,28 +1,31 @@
-const express = require("express");
+const express = require('express')
+const bodyParser = require('body-parser')
+
 const app = express();
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({  extended: true  }))
 
-app.get("/", (req, res) => {
-	res.send("Hello, World!");
-});
+const productAdminRoutes = require('./routes/admin/products')
+app.use('/admin', productAdminRoutes)
 
-const sequelize = require("./utils/db");
+const productRoutes = require('./routes/products')
+app.use(productRoutes)
 
-sequelize.sync().then(() => {
-	console.log("Database synchronized");
-});
+const sequelize = require('./util/db')
+
+const models = require('./models/index')
+sequelize.models = models
 
 sequelize
-	.authenticate()
-	.then(() => {
-		console.log("Database connected");
-	})
-	.catch((err) => {
-		console.error("Unable to connect to the database:", err);
-	});
+    .sync()
+    .then(() => {
+        console.log('Tabelid on loodud')
+        app.listen(3000)
+    })
+    .catch((error) => {
+        console.log(error)
+    })
 
-app.listen(3000, () => {
-	console.log(`Server is running on port 3000`);
-});
+app.get('/', (req, res) => {
+    res.json({ message: 'web shop app' })
+})
