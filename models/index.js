@@ -30,6 +30,8 @@ models.User = require('./user')
 models.Product = require('./product')
 models.Cart = require('./cart')
 models.CartItem = require('./cart-item')
+models.Order = require('./order');
+models.OrderItem = require('./order-items');
 
 models.User.hasOne(models.Cart)
 models.Cart.belongsTo(models.User)
@@ -39,6 +41,12 @@ models.Product.belongsToMany(models.Cart, { through: models.CartItem })
 
 models.User.hasMany(models.Product)
 models.Product.belongsTo(models.User, {constraints: true, onDelete: 'CASCADE'})
+
+models.User.hasMany(models.Order);
+models.Order.belongsTo(models.User);
+
+models.Order.belongsToMany(models.Product, { through: models.OrderItem });
+models.Product.belongsToMany(models.Order, { through: models.OrderItem });
 
     return models
 })()
